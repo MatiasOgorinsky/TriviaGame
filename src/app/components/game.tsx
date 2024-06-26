@@ -82,28 +82,31 @@ const Game: React.FC<GameProps> = ({ username }) => {
   const handleOptionClick = async (selectedName: string) => {
     setSelectedOption(selectedName);
     const correct = selectedName === currentPlayer?.name;
+
     if (correct) {
       setScore(score + 1);
     }
 
-    setTimeout(async () => {
-      setQuestionNumber(questionNumber + 1);
-      if (questionNumber === 9) {
-        alert(`Game Over! Your final score is ${score}`);
-        setUsedPlayerIndices([]);
+    // Immediately update questionNumber and check game over condition
+    const updatedQuestionNumber = questionNumber + 1;
 
-        try {
-          await postResult(username, score);
-          console.log("Result posted successfully");
-        } catch (error) {
-          console.error("Error posting result:", error);
-        }
+    if (updatedQuestionNumber === 10) {
+      alert(`Game Over! Your final score is ${correct ? score + 1 : score}`);
+      setUsedPlayerIndices([]);
 
-        setGameOver(true);
-      } else {
-        startGame(players, randomNames);
+      try {
+        await postResult(username, correct ? score + 1 : score);
+        console.log("Result posted successfully");
+      } catch (error) {
+        console.error("Error posting result:", error);
       }
-    }, 1000);
+      setGameOver(true);
+    } else {
+      setQuestionNumber(updatedQuestionNumber);
+      setTimeout(() => {
+        startGame(players, randomNames);
+      }, 1000);
+    }
   };
 
   // Function to handle play again button click
