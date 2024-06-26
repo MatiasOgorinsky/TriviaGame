@@ -23,7 +23,7 @@ const GameComponent = () => {
           </button>
         </div>
       ) : (
-        <Game />
+        <Game username={userName} />
       )}
     </div>
   );

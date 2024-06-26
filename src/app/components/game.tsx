@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchPlayers, fetchRandomNames } from "../players/page";
+import { fetchPlayers, fetchRandomNames, postResult } from "../players/page";
 
-const Game = () => {
+const Game = ({ username }) => {
   const [players, setPlayers] = useState([]);
   const [randomNames, setRandomNames] = useState([]);
   const [currentPlayer, setCurrentPlayer] = useState(null);
@@ -13,6 +13,7 @@ const Game = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -37,6 +38,7 @@ const Game = () => {
     generateOptions(player, fetchedRandomNames);
     setSelectedOption(null);
     setIsCorrect(null);
+    setGameOver(false);
   };
 
   const generateOptions = (player, fetchedRandomNames) => {
@@ -55,7 +57,7 @@ const Game = () => {
     return array.sort(() => Math.random() - 0.5);
   };
 
-  const handleOptionClick = (selectedName) => {
+  const handleOptionClick = async (selectedName) => {
     setSelectedOption(selectedName);
     const correct = selectedName === currentPlayer.name;
     setIsCorrect(correct);
@@ -63,12 +65,19 @@ const Game = () => {
       setScore(score + 1);
     }
 
-    setTimeout(() => {
+    setTimeout(async () => {
       setQuestionNumber(questionNumber + 1);
       if (questionNumber === 9) {
         alert(`Game Over! Your final score is ${score}`);
-        setQuestionNumber(0);
-        setScore(0);
+
+        try {
+          await postResult(username, score);
+          console.log("Result posted successfully");
+        } catch (error) {
+          console.error("Error posting result:", error);
+        }
+
+        setGameOver(true);
       } else {
         startGame(players, randomNames);
       }
@@ -78,6 +87,7 @@ const Game = () => {
   const handlePlayAgain = () => {
     setQuestionNumber(0);
     setScore(0);
+    setGameOver(false);
     startGame(players, randomNames);
   };
 
@@ -88,14 +98,14 @@ const Game = () => {
       ) : (
         <>
           <h1 className="text-3xl font-bold mb-4 text-center">Guess the Football Player</h1>
-          {questionNumber < 10 ? (
+          {!gameOver && questionNumber < 10 ? (
             <>
               <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} style={{ width: "280px", height: "auto" }} className="rounded-lg shadow-lg mb-4" />}</div>
               <div className="grid grid-cols-1 gap-4 w-full max-w-md">
                 {options.map((name, index) => (
                   <button
                     key={index}
-                    className={`w-90 text-black font-bold py-2 px-4 rounded ${selectedOption ? (name === currentPlayer.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white hover:bg-orange-400"}`}
+                    className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white hover:bg-orange-400"}`}
                     onClick={() => handleOptionClick(name)}
                     disabled={selectedOption !== null}
                   >
