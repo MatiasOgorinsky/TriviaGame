@@ -1,19 +1,30 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { fetchPlayers, fetchRandomNames, postResult } from "../utils/apiUtils";
 
-const Game = ({ username }) => {
-  const [players, setPlayers] = useState([]);
-  const [randomNames, setRandomNames] = useState([]);
-  const [currentPlayer, setCurrentPlayer] = useState(null);
-  const [options, setOptions] = useState([]);
-  const [score, setScore] = useState(0);
-  const [questionNumber, setQuestionNumber] = useState(0);
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [isCorrect, setIsCorrect] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [gameOver, setGameOver] = useState(false);
+interface GameProps {
+  username: string;
+}
+
+interface Player {
+  name: string;
+  image: string;
+}
+
+interface RandomName {
+  name: string;
+}
+
+const Game: React.FC<GameProps> = ({ username }) => {
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [randomNames, setRandomNames] = useState<RandomName[]>([]);
+  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
+  const [options, setOptions] = useState<string[]>([]);
+  const [score, setScore] = useState<number>(0);
+  const [questionNumber, setQuestionNumber] = useState<number>(0);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [gameOver, setGameOver] = useState<boolean>(false);
 
   useEffect(() => {
     fetchData();
@@ -21,17 +32,21 @@ const Game = ({ username }) => {
 
   const fetchData = async () => {
     setLoading(true);
-    const fetchedPlayers = await fetchPlayers();
-    const fetchedRandomNames = await fetchRandomNames();
-
-    setPlayers(fetchedPlayers);
-    setRandomNames(fetchedRandomNames);
-
-    startGame(fetchedPlayers, fetchedRandomNames);
-    setLoading(false);
+    try {
+      const fetchedPlayers = await fetchPlayers();
+      const fetchedRandomNames = await fetchRandomNames();
+      setPlayers(fetchedPlayers);
+      setRandomNames(fetchedRandomNames);
+      startGame(fetchedPlayers, fetchedRandomNames);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const startGame = (fetchedPlayers, fetchedRandomNames) => {
+  // Function to start the game
+  const startGame = (fetchedPlayers: Player[], fetchedRandomNames: RandomName[]) => {
     const randomIndex = Math.floor(Math.random() * fetchedPlayers.length);
     const player = fetchedPlayers[randomIndex];
     setCurrentPlayer(player);
@@ -41,7 +56,8 @@ const Game = ({ username }) => {
     setGameOver(false);
   };
 
-  const generateOptions = (player, fetchedRandomNames) => {
+  // Function to generate options for the game
+  const generateOptions = (player: Player, fetchedRandomNames: RandomName[]) => {
     const correctName = player.name;
     const randomNamesSubset = fetchedRandomNames
       .filter((nameObj) => nameObj.name !== correctName)
@@ -50,16 +66,17 @@ const Game = ({ username }) => {
       .map((nameObj) => nameObj.name);
     const options = shuffle([correctName, ...randomNamesSubset]);
     setOptions(options);
-    console.log(options, "here options");
   };
 
-  const shuffle = (array) => {
+  // Helper function to shuffle array
+  const shuffle = (array: string[]) => {
     return array.sort(() => Math.random() - 0.5);
   };
 
-  const handleOptionClick = async (selectedName) => {
+  // Function to handle option click
+  const handleOptionClick = async (selectedName: string) => {
     setSelectedOption(selectedName);
-    const correct = selectedName === currentPlayer.name;
+    const correct = selectedName === currentPlayer?.name;
     setIsCorrect(correct);
     if (correct) {
       setScore(score + 1);
@@ -84,6 +101,7 @@ const Game = ({ username }) => {
     }, 1000);
   };
 
+  // Function to handle play again button click
   const handlePlayAgain = () => {
     setQuestionNumber(0);
     setScore(0);
@@ -105,7 +123,7 @@ const Game = ({ username }) => {
                 {options.map((name, index) => (
                   <button
                     key={index}
-                    className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white hover:bg-orange-400"}`}
+                    className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white hover:bg-orange-400"}`}
                     onClick={() => handleOptionClick(name)}
                     disabled={selectedOption !== null}
                   >
