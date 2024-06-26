@@ -22,7 +22,6 @@ const Game: React.FC<GameProps> = ({ username }) => {
   const [score, setScore] = useState<number>(0);
   const [questionNumber, setQuestionNumber] = useState<number>(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [usedPlayerIndices, setUsedPlayerIndices] = useState<number[]>([]); // Track used player indices
@@ -84,7 +83,6 @@ const Game: React.FC<GameProps> = ({ username }) => {
   const handleOptionClick = async (selectedName: string) => {
     setSelectedOption(selectedName);
     const correct = selectedName === currentPlayer?.name;
-    setIsCorrect(correct);
     if (correct) {
       setScore(score + 1);
     }
