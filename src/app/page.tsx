@@ -9,7 +9,9 @@ const Game = () => {
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [options, setOptions] = useState([]);
   const [score, setScore] = useState(0);
-  const [questionNumber, setQuestionNumber] = useState(0); // Track number of questions shown
+  const [questionNumber, setQuestionNumber] = useState(0);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [isCorrect, setIsCorrect] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -30,15 +32,9 @@ const Game = () => {
     const player = fetchedPlayers[randomIndex];
     setCurrentPlayer(player);
     generateOptions(player, fetchedRandomNames);
+    setSelectedOption(null);
+    setIsCorrect(null);
   };
-
-  // const generateOptions = (player, fetchedRandomNames) => {
-  //   const correctName = player.name;
-  //   const shuffledNames = shuffle([...fetchedRandomNames.map((nameObj) => nameObj.name), correctName]);
-  //   const options = shuffledNames.slice(0, 2); // Choose 3 random names
-  //   setOptions(shuffle(options));
-  //   console.log(options, "here options");
-  // };
 
   const generateOptions = (player, fetchedRandomNames) => {
     const correctName = player.name;
@@ -57,25 +53,23 @@ const Game = () => {
   };
 
   const handleOptionClick = (selectedName) => {
-    if (selectedName === currentPlayer.name) {
-      alert("Correct answer!");
+    setSelectedOption(selectedName);
+    const correct = selectedName === currentPlayer.name;
+    setIsCorrect(correct);
+    if (correct) {
       setScore(score + 1);
-    } else {
-      alert(`Wrong answer! The correct answer is ${currentPlayer.name}.`);
     }
-    setQuestionNumber(questionNumber + 1);
-    if (questionNumber === 9) {
-      // Last question shown
-      alert(`Game Over! Your final score is ${score}`);
-      setQuestionNumber(0);
-      setScore(0);
-    } else {
-      startGame(players, randomNames);
-      const nextIndex = (players.indexOf(currentPlayer) + 1) % players.length;
-      const nextPlayer = players[nextIndex];
-      setCurrentPlayer(nextPlayer);
-      generateOptions(nextPlayer, randomNames);
-    }
+
+    setTimeout(() => {
+      setQuestionNumber(questionNumber + 1);
+      if (questionNumber === 9) {
+        alert(`Game Over! Your final score is ${score}`);
+        setQuestionNumber(0);
+        setScore(0);
+      } else {
+        startGame(players, randomNames);
+      }
+    }, 1000); // increased to 2 seconds to give time to display correct/incorrect
   };
 
   const handlePlayAgain = () => {
@@ -92,7 +86,12 @@ const Game = () => {
           <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} style={{ width: "280px", height: "auto" }} className="rounded-lg shadow-lg mb-4" />}</div>
           <div className="grid grid-cols-1 gap-4 w-full max-w-md">
             {options.map((name, index) => (
-              <button key={index} className="w-90 hover:bg-orange-400 text-black bg-white font-bold py-2 px-4 rounded" onClick={() => handleOptionClick(name)}>
+              <button
+                key={index}
+                className={`w-90 text-black font-bold py-2 px-4 rounded ${selectedOption ? (name === currentPlayer.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white hover:bg-orange-400"}`}
+                onClick={() => handleOptionClick(name)}
+                disabled={selectedOption !== null}
+              >
                 {name}
               </button>
             ))}
