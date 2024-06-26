@@ -7,7 +7,9 @@ const GameComponent = () => {
   const [startGame, setStartGame] = useState(false);
 
   const handleStartGame = (name: string) => {
-    setUserName(name);
+    if (!userName) {
+      return;
+    }
     setStartGame(true);
   };
 
