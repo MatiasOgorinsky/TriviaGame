@@ -92,7 +92,7 @@ const Game = () => {
           <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} style={{ width: "280px", height: "auto" }} className="rounded-lg shadow-lg mb-4" />}</div>
           <div className="grid grid-cols-1 gap-4 w-full max-w-md">
             {options.map((name, index) => (
-              <button key={index} className="w-full hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleOptionClick(name)}>
+              <button key={index} className="w-90 hover:bg-orange-400 text-black bg-white font-bold py-2 px-4 rounded" onClick={() => handleOptionClick(name)}>
                 {name}
               </button>
             ))}
