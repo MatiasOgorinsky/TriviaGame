@@ -57,7 +57,6 @@ const Game: React.FC<GameProps> = ({ username }) => {
     setCurrentPlayer(player);
     generateOptions(player, fetchedRandomNames);
     setSelectedOption(null);
-    setIsCorrect(null);
     setGameOver(false);
     setUsedPlayerIndices([...usedPlayerIndices, fetchedPlayers.findIndex((p) => p.name === player.name)]);
   };
