@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchPlayers, fetchRandomNames, postResult } from "../players/page";
+import { fetchPlayers, fetchRandomNames, postResult } from "../utils/apiUtils";
 
 const Game = ({ username }) => {
   const [players, setPlayers] = useState([]);
