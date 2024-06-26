@@ -132,7 +132,9 @@ const Game: React.FC<GameProps> = ({ username }) => {
                 {options.map((name, index) => (
                   <button
                     key={index}
-                    className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white hover:bg-orange-400"}`}
+                    className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white"} ${
+                      selectedOption === null && name !== currentPlayer?.name ? "hover:bg-orange-400 md:hover:bg-orange-400" : ""
+                    }`}
                     onClick={() => handleOptionClick(name)}
                     disabled={selectedOption !== null}
                   >
