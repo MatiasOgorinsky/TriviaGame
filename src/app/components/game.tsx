@@ -25,11 +25,13 @@ const Game: React.FC<GameProps> = ({ username }) => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [gameOver, setGameOver] = useState<boolean>(false);
+  const [usedPlayerIndices, setUsedPlayerIndices] = useState<number[]>([]); // Track used player indices
 
   useEffect(() => {
     fetchData();
   }, []);
 
+  // Function to fetch players and random names
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -47,13 +49,18 @@ const Game: React.FC<GameProps> = ({ username }) => {
 
   // Function to start the game
   const startGame = (fetchedPlayers: Player[], fetchedRandomNames: RandomName[]) => {
-    const randomIndex = Math.floor(Math.random() * fetchedPlayers.length);
-    const player = fetchedPlayers[randomIndex];
+    const availablePlayers = fetchedPlayers.filter((_, index) => !usedPlayerIndices.includes(index)); // Filter out used players
+    if (availablePlayers.length === 0) {
+      setUsedPlayerIndices([]);
+    }
+    const randomIndex = Math.floor(Math.random() * availablePlayers.length);
+    const player = availablePlayers[randomIndex];
     setCurrentPlayer(player);
     generateOptions(player, fetchedRandomNames);
     setSelectedOption(null);
     setIsCorrect(null);
     setGameOver(false);
+    setUsedPlayerIndices([...usedPlayerIndices, fetchedPlayers.findIndex((p) => p.name === player.name)]);
   };
 
   // Function to generate options for the game
@@ -86,6 +93,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
       setQuestionNumber(questionNumber + 1);
       if (questionNumber === 9) {
         alert(`Game Over! Your final score is ${score}`);
+        setUsedPlayerIndices([]);
 
         try {
           await postResult(username, score);
@@ -106,6 +114,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
     setQuestionNumber(0);
     setScore(0);
     setGameOver(false);
+    fetchData();
     startGame(players, randomNames);
   };
 
