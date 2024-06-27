@@ -1,5 +1,5 @@
 import dbConnect from "@/app/lib/dbConnect";
-import Player from "@/app/model/player";
+import Player from "@/app/model/Player";
 import { NextResponse } from "next/server";
 
 

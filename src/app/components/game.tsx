@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchPlayers, fetchRandomNames, postResult } from "../utils/apiUtils";
 import GameOverScreen from "./gameOverScreen";
-import Timer from "./timer";
+import Timer from "./Timer";
 
 interface GameProps {
   username: string;

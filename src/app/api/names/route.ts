@@ -1,5 +1,5 @@
 import dbConnect from "@/app/lib/dbConnect";
-import RandomName from "@/app/model/randomNames";
+import RandomName from "@/app/model/RandomNames";
 import { NextResponse } from "next/server";
 
 
