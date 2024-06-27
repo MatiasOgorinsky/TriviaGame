@@ -143,7 +143,8 @@ const Game: React.FC<GameProps> = ({ username }) => {
           {!gameOver && questionNumber < 10 ? (
             <>
               <Timer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />
-              <h1 className="text-3xl font-bold mb-4 text-center">Guess the Football Player</h1>
+              {/* <h1 className="text-3xl font-bold mb-4 text-center">Guess the Football Player</h1> */}
+              <h1 className={`text-${isSmallScreen ? "1xl" : "3xl"} font-bold mb-4 text-center`}>Guess the Football Player</h1>
               <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} style={{ width: "280px", height: "auto" }} className="rounded-lg shadow-lg mb-4" />}</div>
               <div className="grid grid-cols-1 gap-4 w-full max-w-md">
                 {options.map((name, index) =>
