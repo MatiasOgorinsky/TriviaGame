@@ -26,7 +26,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [usedPlayerIndices, setUsedPlayerIndices] = useState<number[]>([]); // Track used player indices
-  const [timeLeft, setTimeLeft] = useState<number>(10);
+  const [timeLeft, setTimeLeft] = useState<number>(25);
 
   useEffect(() => {
     fetchData();
@@ -111,7 +111,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
 
   // Function to handle play again button click
   const handlePlayAgain = () => {
-    setTimeLeft(10);
+    setTimeLeft(25);
     setQuestionNumber(0);
     setScore(0);
     setGameOver(false);
