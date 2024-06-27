@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchPlayers, fetchRandomNames, postResult } from "../utils/apiUtils";
 import Timer from "./Timer";
+import GameOverScreen from "./gameOverScreen";
 
 interface GameProps {
   username: string;
@@ -66,12 +67,12 @@ const Game: React.FC<GameProps> = ({ username }) => {
     generateOptions(player, fetchedRandomNames);
     setSelectedOption(null);
     setGameOver(false);
-    setUsedPlayerIndices([...usedPlayerIndices, fetchedPlayers.findIndex((p) => p.name === player.name)]);
+    setUsedPlayerIndices([...usedPlayerIndices, fetchedPlayers.findIndex((p) => p.name === player?.name)]);
   };
 
   // Function to generate options for the game
   const generateOptions = (player: Player, fetchedRandomNames: RandomName[]) => {
-    const correctName = player.name;
+    const correctName = player?.name;
     const randomNamesSubset = fetchedRandomNames
       .filter((nameObj) => nameObj.name !== correctName)
       .sort(() => 0.5 - Math.random())
@@ -145,50 +146,42 @@ const Game: React.FC<GameProps> = ({ username }) => {
     handleScreenSize();
   }, []);
 
+  if (gameOver || questionNumber === 10) {
+    return <GameOverScreen score={score} handlePlayAgain={handlePlayAgain} />;
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8">
       {loading ? (
         <h1 className="text-3xl font-bold mb-4 text-center">Loading game...</h1>
       ) : (
         <>
-          {!gameOver && questionNumber < 10 ? (
-            <>
-              <Timer timeLeft={timeLeft} setTimeLeft={setTimeLeft} setGameOver={setGameOver} />
-              <h1 className={`text-${isSmallScreen ? "1xl" : "3xl"} font-bold mb-4 text-center`}>Guess the Football Player</h1>
-              <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} style={{ width: "280px", height: "auto" }} className="rounded-lg shadow-lg mb-4" />}</div>
-              <div className="grid grid-cols-1 gap-4 w-full max-w-md">
-                {options.map((name, index) =>
-                  isSmallScreen ? (
-                    <button
-                      key={index}
-                      className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white"}`}
-                      onClick={() => handleOptionClick(name)}
-                      disabled={selectedOption !== null}
-                    >
-                      {name}
-                    </button>
-                  ) : (
-                    <button
-                      key={index}
-                      className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white hover:bg-orange-400 hover:sg-white"}`}
-                      onClick={() => handleOptionClick(name)}
-                      disabled={selectedOption !== null}
-                    >
-                      {name}
-                    </button>
-                  )
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="text-center">
-              <p className="text-xl font-semibold">Game Over!</p>
-              <p className="text-xl">Your final score is {score}</p>
-              <button className="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={handlePlayAgain}>
-                Play Again
-              </button>
-            </div>
-          )}
+          <Timer timeLeft={timeLeft} setTimeLeft={setTimeLeft} setGameOver={setGameOver} />
+          <h1 className={`text-${isSmallScreen ? "1xl" : "3xl"} font-bold mb-4 text-center`}>Guess the Football Player</h1>
+          <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} style={{ width: "280px", height: "auto" }} className="rounded-lg shadow-lg mb-4" />}</div>
+          <div className="grid grid-cols-1 gap-4 w-full max-w-md">
+            {options.map((name, index) =>
+              isSmallScreen ? (
+                <button
+                  key={index}
+                  className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white"}`}
+                  onClick={() => handleOptionClick(name)}
+                  disabled={selectedOption !== null}
+                >
+                  {name}
+                </button>
+              ) : (
+                <button
+                  key={index}
+                  className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white hover:bg-orange-400 hover:sg-white"}`}
+                  onClick={() => handleOptionClick(name)}
+                  disabled={selectedOption !== null}
+                >
+                  {name}
+                </button>
+              )
+            )}
+          </div>
         </>
       )}
     </div>

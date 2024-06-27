@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/app/lib/dbConnect";
-import Result from "@/app/model/Result";
+import Result from "@/app/model/result";
 
 export async function POST(request: Request) {
   await dbConnect();
