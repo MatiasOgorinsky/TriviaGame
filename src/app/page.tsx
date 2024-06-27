@@ -27,7 +27,6 @@ const GameComponent = () => {
     setStartGame(true);
   };
 
-  console.log(userId, "here user id");
   return (
     <div>
       {!startGame ? (
