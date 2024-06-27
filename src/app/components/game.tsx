@@ -67,7 +67,6 @@ const Game: React.FC<GameProps> = ({ username }) => {
     setSelectedOption(null);
     setGameOver(false);
     setUsedPlayerIndices([...usedPlayerIndices, fetchedPlayers.findIndex((p) => p.name === player.name)]);
-    setTimeLeft(20);
   };
 
   // Function to generate options for the game
