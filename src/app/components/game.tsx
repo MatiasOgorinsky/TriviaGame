@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchPlayers, fetchRandomNames, postResult } from "../utils/apiUtils";
+import Timer from "./Timer";
 
 interface GameProps {
   username: string;
@@ -25,6 +26,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [usedPlayerIndices, setUsedPlayerIndices] = useState<number[]>([]); // Track used player indices
+  const [timeLeft, setTimeLeft] = useState<number>(10);
 
   useEffect(() => {
     fetchData();
@@ -91,17 +93,14 @@ const Game: React.FC<GameProps> = ({ username }) => {
     const updatedQuestionNumber = questionNumber + 1;
 
     if (updatedQuestionNumber === 10) {
-      // alert(`Game Over! Your final score is ${correct ? score + 1 : score}`);
       setUsedPlayerIndices([]);
       setGameOver(true);
 
       try {
         await postResult(username, correct ? score + 1 : score);
-        console.log("Result posted successfully");
       } catch (error) {
         console.error("Error posting result:", error);
       }
-      // setGameOver(true);
     } else {
       setQuestionNumber(updatedQuestionNumber);
       setTimeout(() => {
@@ -112,6 +111,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
 
   // Function to handle play again button click
   const handlePlayAgain = () => {
+    setTimeLeft(10);
     setQuestionNumber(0);
     setScore(0);
     setGameOver(false);
@@ -119,15 +119,20 @@ const Game: React.FC<GameProps> = ({ username }) => {
     startGame(players, randomNames);
   };
 
+  setTimeout(() => {
+    console.log("Delayed for 1 second.");
+  }, 5000);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8">
       {loading ? (
         <h1 className="text-3xl font-bold mb-4 text-center">Loading game...</h1>
       ) : (
         <>
-          <h1 className="text-3xl font-bold mb-4 text-center">Guess the Football Player</h1>
           {!gameOver && questionNumber < 10 ? (
             <>
+              <Timer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />
+              <h1 className="text-3xl font-bold mb-4 text-center">Guess the Football Player</h1>
               <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} style={{ width: "280px", height: "auto" }} className="rounded-lg shadow-lg mb-4" />}</div>
               <div className="grid grid-cols-1 gap-4 w-full max-w-md">
                 {options.map((name, index) => (
