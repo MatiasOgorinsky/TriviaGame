@@ -3,9 +3,10 @@ import React, { useEffect } from "react";
 interface TimerProps {
   timeLeft: number;
   setTimeLeft: React.Dispatch<React.SetStateAction<number>>;
+  setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Timer: React.FC<TimerProps> = ({ timeLeft, setTimeLeft }) => {
+const Timer: React.FC<TimerProps> = ({ timeLeft, setTimeLeft, setGameOver }) => {
   useEffect(() => {
     if (timeLeft > 0) {
       const timerId = setInterval(() => {
@@ -14,6 +15,7 @@ const Timer: React.FC<TimerProps> = ({ timeLeft, setTimeLeft }) => {
 
       return () => clearInterval(timerId);
     }
+    setGameOver(true);
   }, [timeLeft]);
 
   return (

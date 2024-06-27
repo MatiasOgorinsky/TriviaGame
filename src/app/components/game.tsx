@@ -26,7 +26,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [usedPlayerIndices, setUsedPlayerIndices] = useState<number[]>([]);
-  const [timeLeft, setTimeLeft] = useState<number>(20);
+  const [timeLeft, setTimeLeft] = useState<number>(15);
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -117,7 +117,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
 
   // Function to handle play again button click
   const handlePlayAgain = () => {
-    setTimeLeft(20);
+    setTimeLeft(15);
     setQuestionNumber(0);
     setScore(0);
     setGameOver(false);
@@ -154,7 +154,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
         <>
           {!gameOver && questionNumber < 10 ? (
             <>
-              <Timer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />
+              <Timer timeLeft={timeLeft} setTimeLeft={setTimeLeft} setGameOver={setGameOver} />
               <h1 className={`text-${isSmallScreen ? "1xl" : "3xl"} font-bold mb-4 text-center`}>Guess the Football Player</h1>
               <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} style={{ width: "280px", height: "auto" }} className="rounded-lg shadow-lg mb-4" />}</div>
               <div className="grid grid-cols-1 gap-4 w-full max-w-md">
