@@ -18,10 +18,9 @@ const Timer: React.FC<TimerProps> = ({ timeLeft, setTimeLeft }) => {
 
   return (
     <div>
-      <div className="text-2xl text-orange-500">{timeLeft > 0 ? `${timeLeft} seconds left` : "Time's up!"}</div>
+      <div className="text-1xl font-semibold text-orange-600">{timeLeft > 0 ? `${timeLeft} seconds left` : "Time's up!"}</div>
     </div>
   );
 };
 
 export default Timer;
-// localStorage;

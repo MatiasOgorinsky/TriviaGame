@@ -25,16 +25,16 @@ const Game: React.FC<GameProps> = ({ username }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [gameOver, setGameOver] = useState<boolean>(false);
-  const [usedPlayerIndices, setUsedPlayerIndices] = useState<number[]>([]); // Track used player indices
-  const [timeLeft, setTimeLeft] = useState<number>(25);
+  const [usedPlayerIndices, setUsedPlayerIndices] = useState<number[]>([]);
+  const [timeLeft, setTimeLeft] = useState<number>(20);
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchData();
     handleScreenSize();
-    window.addEventListener("resize", handleScreenSize); // Listen for screen size changes
+    window.addEventListener("resize", handleScreenSize);
     return () => {
-      window.removeEventListener("resize", handleScreenSize); // Clean up resize listener
+      window.removeEventListener("resize", handleScreenSize);
     };
   }, []);
 
@@ -56,7 +56,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
 
   // Function to start the game
   const startGame = (fetchedPlayers: Player[], fetchedRandomNames: RandomName[]) => {
-    const availablePlayers = fetchedPlayers.filter((_, index) => !usedPlayerIndices.includes(index)); // Filter out used players
+    const availablePlayers = fetchedPlayers.filter((_, index) => !usedPlayerIndices.includes(index));
     if (availablePlayers.length === 0) {
       setUsedPlayerIndices([]);
     }
@@ -67,6 +67,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
     setSelectedOption(null);
     setGameOver(false);
     setUsedPlayerIndices([...usedPlayerIndices, fetchedPlayers.findIndex((p) => p.name === player.name)]);
+    setTimeLeft(20);
   };
 
   // Function to generate options for the game
@@ -117,13 +118,25 @@ const Game: React.FC<GameProps> = ({ username }) => {
 
   // Function to handle play again button click
   const handlePlayAgain = () => {
-    setTimeLeft(25);
+    setTimeLeft(20);
     setQuestionNumber(0);
     setScore(0);
     setGameOver(false);
     fetchData();
     startGame(players, randomNames);
   };
+
+  useEffect(() => {
+    if (timeLeft === 0) {
+      setGameOver(true);
+      setUsedPlayerIndices([]);
+      try {
+        postResult(username, score);
+      } catch (error) {
+        console.error("Error posting result:", error);
+      }
+    }
+  }, [timeLeft, username, score]);
 
   // Function to handle screen size detection
   const handleScreenSize = () => {
@@ -143,12 +156,10 @@ const Game: React.FC<GameProps> = ({ username }) => {
           {!gameOver && questionNumber < 10 ? (
             <>
               <Timer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />
-              {/* <h1 className="text-3xl font-bold mb-4 text-center">Guess the Football Player</h1> */}
               <h1 className={`text-${isSmallScreen ? "1xl" : "3xl"} font-bold mb-4 text-center`}>Guess the Football Player</h1>
               <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} style={{ width: "280px", height: "auto" }} className="rounded-lg shadow-lg mb-4" />}</div>
               <div className="grid grid-cols-1 gap-4 w-full max-w-md">
                 {options.map((name, index) =>
-                  // Conditional rendering based on screen size
                   isSmallScreen ? (
                     <button
                       key={index}
