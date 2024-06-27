@@ -6,9 +6,9 @@ export async function POST(request: Request) {
   await dbConnect();
   
   try {
-    const { username, score } = await request.json();
+    const { userId, score } = await request.json();
 
-    const newResult = new Result({ username, score });
+    const newResult = new Result({ userId, score });
     await newResult.save();
 
     return NextResponse.json(newResult, { status: 201 });

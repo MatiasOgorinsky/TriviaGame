@@ -18,14 +18,14 @@ export const fetchRandomNames = async () => {
   }
 };
 
-export const postResult = async (username: string, score: number) => {
+export const postResult = async (userId: string, score: number) => {
   try {
     const response = await fetch("/api/results", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, score }),
+      body: JSON.stringify({ userId, score }),
     });
 
     if (!response.ok) {

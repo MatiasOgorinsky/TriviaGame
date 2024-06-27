@@ -1,12 +1,12 @@
 import mongoose, {Document, Schema } from "mongoose";
 
 export interface IResult extends Document{
-    username:string;
+    userId:string;
     score:number;
 }
 
 const ResultSchema: Schema = new mongoose.Schema({
-    username: {
+    userId: {
       type: String,
       required: true,
     },
