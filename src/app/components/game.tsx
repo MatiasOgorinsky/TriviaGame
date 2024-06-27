@@ -91,8 +91,9 @@ const Game: React.FC<GameProps> = ({ username }) => {
     const updatedQuestionNumber = questionNumber + 1;
 
     if (updatedQuestionNumber === 10) {
-      alert(`Game Over! Your final score is ${correct ? score + 1 : score}`);
+      // alert(`Game Over! Your final score is ${correct ? score + 1 : score}`);
       setUsedPlayerIndices([]);
+      setGameOver(true);
 
       try {
         await postResult(username, correct ? score + 1 : score);
@@ -100,7 +101,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
       } catch (error) {
         console.error("Error posting result:", error);
       }
-      setGameOver(true);
+      // setGameOver(true);
     } else {
       setQuestionNumber(updatedQuestionNumber);
       setTimeout(() => {
@@ -132,7 +133,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
                 {options.map((name, index) => (
                   <button
                     key={index}
-                    className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white hover:bg-orange-400"}`}
+                    className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white hover:bg-orange-400 hover:sg-white"}`}
                     onClick={() => handleOptionClick(name)}
                     disabled={selectedOption !== null}
                   >
