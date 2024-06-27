@@ -95,7 +95,6 @@ const Game: React.FC<GameProps> = ({ username }) => {
       setScore(score + 1);
     }
 
-    // Immediately update questionNumber and check game over condition
     const updatedQuestionNumber = questionNumber + 1;
 
     if (updatedQuestionNumber === 10) {
