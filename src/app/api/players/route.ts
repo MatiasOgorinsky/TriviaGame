@@ -5,7 +5,6 @@ import { NextResponse } from "next/server";
 
 export async function GET(){
     await dbConnect();
-    // el await podria ir dentro
     try {
         const players = await Player.find({});
         return NextResponse.json(players);
