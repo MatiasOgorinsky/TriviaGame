@@ -127,11 +127,11 @@ const Game: React.FC<GameProps> = ({ username }) => {
 
   // Function to handle screen size detection
   const handleScreenSize = () => {
-    setIsSmallScreen(window.innerWidth <= 640); // Adjust this threshold as needed
+    setIsSmallScreen(window.innerWidth <= 640);
   };
 
   useEffect(() => {
-    handleScreenSize(); // Initial check on component mount
+    handleScreenSize();
   }, []);
 
   return (
@@ -151,7 +151,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
                   isSmallScreen ? (
                     <button
                       key={index}
-                      className={`w-90 py-4 px-6 text-lg font-bold border-2 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white"}`}
+                      className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white"}`}
                       onClick={() => handleOptionClick(name)}
                       disabled={selectedOption !== null}
                     >
