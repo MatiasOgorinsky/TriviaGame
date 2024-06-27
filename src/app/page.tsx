@@ -1,29 +1,43 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Game from "./components/game";
+import { v4 as uuidv4 } from "uuid";
 
 const GameComponent = () => {
-  const [userName, setUserName] = useState("");
-  const [startGame, setStartGame] = useState(false);
+  const [userId, setUserId] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      const storedUserId = localStorage.getItem("userId");
+      return storedUserId || "";
+    }
+    return "";
+  });
+  const [startGame, setStartGame] = useState<boolean>(false);
 
-  const handleStartGame = (name: string) => {
-    if (!userName) {
-      return;
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("userId", userId);
+    }
+  }, [userId]);
+
+  const handleStartGame = () => {
+    if (!userId) {
+      const newUserId = uuidv4();
+      setUserId(newUserId);
     }
     setStartGame(true);
   };
 
+  console.log(userId, "here user id");
   return (
     <div>
       {!startGame ? (
         <div className="flex flex-col items-center justify-center min-h-screen p-8">
-          <input type="text" placeholder="Enter your name" onChange={(e) => setUserName(e.target.value)} className="border-2 border-gray-500 p-2 rounded" />
-          <button className="bg-orange-400 mt-10 px-6 py-3 text-lg rounded text-white" onClick={() => handleStartGame(userName)}>
+          <button className="bg-orange-400 mt-10 px-6 py-3 text-lg rounded text-white" onClick={handleStartGame}>
             Start Game
           </button>
         </div>
       ) : (
-        <Game username={userName} />
+        <Game username={userId} />
       )}
     </div>
   );
