@@ -27,9 +27,15 @@ const Game: React.FC<GameProps> = ({ username }) => {
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [usedPlayerIndices, setUsedPlayerIndices] = useState<number[]>([]); // Track used player indices
   const [timeLeft, setTimeLeft] = useState<number>(25);
+  const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false);
 
   useEffect(() => {
     fetchData();
+    handleScreenSize();
+    window.addEventListener("resize", handleScreenSize); // Listen for screen size changes
+    return () => {
+      window.removeEventListener("resize", handleScreenSize); // Clean up resize listener
+    };
   }, []);
 
   // Function to fetch players and random names
@@ -119,9 +125,14 @@ const Game: React.FC<GameProps> = ({ username }) => {
     startGame(players, randomNames);
   };
 
-  setTimeout(() => {
-    console.log("Delayed for 1 second.");
-  }, 5000);
+  // Function to handle screen size detection
+  const handleScreenSize = () => {
+    setIsSmallScreen(window.innerWidth <= 640); // Adjust this threshold as needed
+  };
+
+  useEffect(() => {
+    handleScreenSize(); // Initial check on component mount
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8">
@@ -135,16 +146,28 @@ const Game: React.FC<GameProps> = ({ username }) => {
               <h1 className="text-3xl font-bold mb-4 text-center">Guess the Football Player</h1>
               <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} style={{ width: "280px", height: "auto" }} className="rounded-lg shadow-lg mb-4" />}</div>
               <div className="grid grid-cols-1 gap-4 w-full max-w-md">
-                {options.map((name, index) => (
-                  <button
-                    key={index}
-                    className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white hover:bg-orange-400 hover:sg-white"}`}
-                    onClick={() => handleOptionClick(name)}
-                    disabled={selectedOption !== null}
-                  >
-                    {name}
-                  </button>
-                ))}
+                {options.map((name, index) =>
+                  // Conditional rendering based on screen size
+                  isSmallScreen ? (
+                    <button
+                      key={index}
+                      className={`w-90 py-4 px-6 text-lg font-bold border-2 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white"}`}
+                      onClick={() => handleOptionClick(name)}
+                      disabled={selectedOption !== null}
+                    >
+                      {name}
+                    </button>
+                  ) : (
+                    <button
+                      key={index}
+                      className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white hover:bg-orange-400 hover:sg-white"}`}
+                      onClick={() => handleOptionClick(name)}
+                      disabled={selectedOption !== null}
+                    >
+                      {name}
+                    </button>
+                  )
+                )}
               </div>
             </>
           ) : (
