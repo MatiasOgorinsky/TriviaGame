@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchPlayers, fetchRandomNames, postResult } from "../utils/apiUtils";
-import GameOverScreen from "./gameOverScreen";
+import GameOverScreen from "./GameOverScreen";
 import Timer from "./Timer";
 
 interface GameProps {
@@ -27,7 +27,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [usedPlayerIndices, setUsedPlayerIndices] = useState<number[]>([]);
-  const [timeLeft, setTimeLeft] = useState<number>(15);
+  const [timeLeft, setTimeLeft] = useState<number>(5);
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -112,7 +112,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
   };
 
   const handlePlayAgain = () => {
-    setTimeLeft(15);
+    setTimeLeft(5);
     setQuestionNumber(0);
     setScore(0);
     setGameOver(false);
@@ -139,7 +139,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
     handleScreenSize();
   }, []);
 
-  if (gameOver || questionNumber === 10) {
+  if (gameOver) {
     return <GameOverScreen score={score} handlePlayAgain={handlePlayAgain} />;
   }
 
