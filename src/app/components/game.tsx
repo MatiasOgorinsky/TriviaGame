@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchPlayers, fetchRandomNames, postResult } from "../utils/apiUtils";
 import GameOverScreen from "./gameOverScreen";
-import Timer from "./Timer";
+import Timer from "./timer";
 
 interface GameProps {
   username: string;
@@ -39,7 +39,6 @@ const Game: React.FC<GameProps> = ({ username }) => {
     };
   }, []);
 
-  // Function to fetch players and random names
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -47,7 +46,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
       const fetchedRandomNames = await fetchRandomNames();
       setPlayers(fetchedPlayers);
       setRandomNames(fetchedRandomNames);
-      startGame(fetchedPlayers, fetchedRandomNames);
+      startGame(fetchedPlayers, fetchedRandomNames, []);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -55,11 +54,11 @@ const Game: React.FC<GameProps> = ({ username }) => {
     }
   };
 
-  // Function to start the game
-  const startGame = (fetchedPlayers: Player[], fetchedRandomNames: RandomName[]) => {
-    const availablePlayers = fetchedPlayers.filter((_, index) => !usedPlayerIndices.includes(index));
+  const startGame = (fetchedPlayers: Player[], fetchedRandomNames: RandomName[], usedIndices: number[]) => {
+    let availablePlayers = fetchedPlayers.filter((_, index) => !usedIndices.includes(index));
     if (availablePlayers.length === 0) {
-      setUsedPlayerIndices([]);
+      usedIndices = [];
+      availablePlayers = fetchedPlayers;
     }
     const randomIndex = Math.floor(Math.random() * availablePlayers.length);
     const player = availablePlayers[randomIndex];
@@ -67,12 +66,11 @@ const Game: React.FC<GameProps> = ({ username }) => {
     generateOptions(player, fetchedRandomNames);
     setSelectedOption(null);
     setGameOver(false);
-    setUsedPlayerIndices([...usedPlayerIndices, fetchedPlayers.findIndex((p) => p.name === player?.name)]);
+    setUsedPlayerIndices([...usedIndices, fetchedPlayers.findIndex((p) => p.name === player.name)]);
   };
 
-  // Function to generate options for the game
   const generateOptions = (player: Player, fetchedRandomNames: RandomName[]) => {
-    const correctName = player?.name;
+    const correctName = player.name;
     const randomNamesSubset = fetchedRandomNames
       .filter((nameObj) => nameObj.name !== correctName)
       .sort(() => 0.5 - Math.random())
@@ -82,12 +80,10 @@ const Game: React.FC<GameProps> = ({ username }) => {
     setOptions(options);
   };
 
-  // Helper function to shuffle array
   const shuffle = (array: string[]) => {
     return array.sort(() => Math.random() - 0.5);
   };
 
-  // Function to handle option click
   const handleOptionClick = async (selectedName: string) => {
     setSelectedOption(selectedName);
     const correct = selectedName === currentPlayer?.name;
@@ -110,19 +106,17 @@ const Game: React.FC<GameProps> = ({ username }) => {
     } else {
       setQuestionNumber(updatedQuestionNumber);
       setTimeout(() => {
-        startGame(players, randomNames);
+        startGame(players, randomNames, usedPlayerIndices);
       }, 1000);
     }
   };
 
-  // Function to handle play again button click
   const handlePlayAgain = () => {
     setTimeLeft(15);
     setQuestionNumber(0);
     setScore(0);
     setGameOver(false);
     fetchData();
-    startGame(players, randomNames);
   };
 
   useEffect(() => {
@@ -137,7 +131,6 @@ const Game: React.FC<GameProps> = ({ username }) => {
     }
   }, [timeLeft, username, score]);
 
-  // Function to handle screen size detection
   const handleScreenSize = () => {
     setIsSmallScreen(window.innerWidth <= 640);
   };
