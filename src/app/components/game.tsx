@@ -27,7 +27,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [usedPlayerIndices, setUsedPlayerIndices] = useState<number[]>([]);
-  const [timeLeft, setTimeLeft] = useState<number>(100);
+  const [timeLeft, setTimeLeft] = useState<number>(15);
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -112,7 +112,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
   };
 
   const handlePlayAgain = () => {
-    setTimeLeft(100);
+    setTimeLeft(15);
     setQuestionNumber(0);
     setScore(0);
     setGameOver(false);
@@ -144,36 +144,25 @@ const Game: React.FC<GameProps> = ({ username }) => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 max-w-sm mx-auto">
       {loading ? (
-        <h1 className="text-3xl font-bold mb-4 text-center">Loading game...</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">Loading game...</h1>
       ) : (
         <>
           <Timer timeLeft={timeLeft} setTimeLeft={setTimeLeft} setGameOver={setGameOver} />
-          <h1 className={`text-${isSmallScreen ? "1xl" : "3xl"} font-bold mb-4 text-center`}>Guess the Football Player</h1>
-          <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} style={{ width: "280px", height: "auto" }} className="rounded-lg shadow-lg mb-4" />}</div>
-          <div className="grid grid-cols-1 gap-4 w-full max-w-md">
-            {options.map((name, index) =>
-              isSmallScreen ? (
-                <button
-                  key={index}
-                  className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white"}`}
-                  onClick={() => handleOptionClick(name)}
-                  disabled={selectedOption !== null}
-                >
-                  {name}
-                </button>
-              ) : (
-                <button
-                  key={index}
-                  className={`w-90 text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white hover:bg-orange-400 hover:sg-white"}`}
-                  onClick={() => handleOptionClick(name)}
-                  disabled={selectedOption !== null}
-                >
-                  {name}
-                </button>
-              )
-            )}
+          <h1 className={`text-${isSmallScreen ? "lg" : "2xl"} font-bold mb-4 text-center`}>Guess the Football Player</h1>
+          <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} className="rounded-lg shadow-lg mb-4" style={{ width: "200px", height: "auto" }} />}</div>
+          <div className="grid grid-cols-1 gap-2 w-full">
+            {options.map((name, index) => (
+              <button
+                key={index}
+                className={`w-full text-black font-bold border-2 py-2 px-4 rounded ${selectedOption ? (name === currentPlayer?.name ? "bg-green-500" : name === selectedOption ? "bg-red-500" : "bg-white") : "bg-white"} ${!isSmallScreen && !selectedOption ? "hover:bg-orange-400" : ""}`}
+                onClick={() => handleOptionClick(name)}
+                disabled={selectedOption !== null}
+              >
+                {name}
+              </button>
+            ))}
           </div>
         </>
       )}
