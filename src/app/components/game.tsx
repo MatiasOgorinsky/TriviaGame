@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchPlayers, fetchRandomNames, postResult } from "../utils/apiUtils";
-import GameOverScreen from "./GameOverScreen";
+import GameOverScreen from "./gameOverScreen";
 import Timer from "./Timer";
 
 interface GameProps {
@@ -95,7 +95,6 @@ const Game: React.FC<GameProps> = ({ username }) => {
     }
 
     const updatedQuestionNumber = questionNumber + 1;
-
     if (updatedQuestionNumber === 10) {
       setUsedPlayerIndices([]);
       setGameOver(true);
