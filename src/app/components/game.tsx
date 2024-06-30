@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchPlayers, fetchRandomNames, postResult } from "../utils/apiUtils";
-import GameOverScreen from "./gameOverScreen";
+import GameOverScreen from "./GameOverScreen";
 import Timer from "./Timer";
 
 interface GameProps {
@@ -29,6 +29,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
   const [usedPlayerIndices, setUsedPlayerIndices] = useState<number[]>([]);
   const [timeLeft, setTimeLeft] = useState<number>(15);
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false);
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     fetchData();
@@ -63,6 +64,7 @@ const Game: React.FC<GameProps> = ({ username }) => {
     const randomIndex = Math.floor(Math.random() * availablePlayers.length);
     const player = availablePlayers[randomIndex];
     setCurrentPlayer(player);
+    setImageLoaded(false);
     generateOptions(player, fetchedRandomNames);
     setSelectedOption(null);
     setGameOver(false);
@@ -145,13 +147,13 @@ const Game: React.FC<GameProps> = ({ username }) => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 max-w-sm mx-auto">
-      {loading ? (
+      {loading || !imageLoaded ? (
         <h1 className="text-2xl font-bold mb-4 text-center">Loading game...</h1>
       ) : (
         <>
           <Timer timeLeft={timeLeft} setTimeLeft={setTimeLeft} setGameOver={setGameOver} />
           <h1 className={`text-${isSmallScreen ? "lg" : "2xl"} font-bold mb-4 text-center`}>Guess the Football Player</h1>
-          <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} className="rounded-lg shadow-lg mb-4" style={{ width: "200px", height: "auto" }} />}</div>
+          <div className="mb-4">{currentPlayer?.image && <img src={currentPlayer.image} alt={currentPlayer.name} className="rounded-lg shadow-lg mb-4" style={{ width: "200px", height: "auto" }} onLoad={() => setImageLoaded(true)} />}</div>
           <div className="grid grid-cols-1 gap-2 w-full">
             {options.map((name, index) => (
               <button

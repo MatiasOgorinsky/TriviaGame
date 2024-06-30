@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Game from "./components/game";
+import Game from "./components/Game";
 import { v4 as uuidv4 } from "uuid";
 
 const GameComponent = () => {
